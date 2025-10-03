@@ -10,7 +10,7 @@ interface FormCardStyles {
 }
 
 interface FormCardInput {
-    label: React.ReactNode;
+    label?: React.ReactNode;
     input: React.ReactNode;
 }
 
@@ -21,15 +21,16 @@ interface FormValues {
 interface FormCardProps {
     title?: string;
     inputs: FormCardInput[];
-    styles?: FormCardStyles;
+    style?: FormCardStyles;
     submitButtonText?: string;
     onSubmit: (data: FormValues) => void;
 }
 
-const defaultStyles: FormCardStyles = {
+const defaultStyle: FormCardStyles = {
     title: {
         marginBottom: "20px",
-        marginTop: 0
+        marginTop: 0,
+        fontFamily: "Arial, sans-serif"
     },
     card: {
         display: "flex",
@@ -52,7 +53,9 @@ const defaultStyles: FormCardStyles = {
         width: "100%"
     },
     label: {
-        alignSelf: "flex-start"
+        alignSelf: "flex-start",
+        marginBottom: "2px",
+        fontFamily: "Arial, sans-serif"
     },
     inputContainer: {
         display: "flex",
@@ -71,37 +74,55 @@ const defaultStyles: FormCardStyles = {
     }
 }
 
-const FormCard = ({ title, inputs, styles = defaultStyles, submitButtonText = "Submit", onSubmit }: FormCardProps) => {
-    styles = {...defaultStyles, ...styles}; // Override default styles with provided styles
+// Notes:
+// `input` fields needs to have `name` attribute for form submission to work
+const FormCard = ({ title, inputs, style = defaultStyle, submitButtonText = "Submit", onSubmit }: FormCardProps) => {
+    style = {...defaultStyle, ...style}; // Override default style with provided style
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
 
+        let data = new FormData(e.currentTarget);
         let values: FormValues = {};
-        inputs.forEach((item: any) => {
-            console.log(item);
-        });
+        data.forEach((value, key) => {
+            values[key] = value;
+        })
 
         onSubmit(values);
     }
 
+    inputs.forEach(item => { // Optimize this later
+        let newLabel = item.label;
+        if(React.isValidElement(item.label)) {
+            const prevStyle = (item.label.props.style ?? {}) as React.CSSProperties;
+            newLabel = React.cloneElement(item.label, {
+                style: {
+                    ...defaultStyle.label,
+                    ...prevStyle
+                }
+            });
+            item.label = newLabel;
+        }
+    })
+
     return (
-        <div style={styles.card}>
+        <div style={style.card}>
             {title &&
-                <h2 style={styles.title}>{title}</h2>
+                <h2 style={style.title}>{title}</h2>
             }
-            <form onSubmit={handleSubmit} style={styles.form}>
+            <form onSubmit={handleSubmit} style={style.form}>
                 {
                     inputs.map((item, index) => {
+                        console.log(item.label);
                         return (
-                            <div style={styles.inputContainer} key={index}>
+                            <div style={style.inputContainer} key={index}>
                                 {item.label}
                                 {item.input}
                             </div>
                         )
                     })
                 }
-                <button type='submit' style={styles.submitButton}>{submitButtonText}</button>
+                <button type='submit' style={style.submitButton}>{submitButtonText}</button>
             </form>
         </div>
     );
