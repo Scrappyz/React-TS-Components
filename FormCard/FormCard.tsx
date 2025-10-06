@@ -1,4 +1,5 @@
 import React from 'react';
+import Card from '../Card/Card';
 
 interface FormCardStyles {
     header?: React.CSSProperties;
@@ -20,7 +21,7 @@ interface FormValues {
 
 interface FormCardProps {
     header?: string;
-    footer?: string;
+    footer?: React.ReactNode;
     inputs: FormCardInput[];
     style?: FormCardStyles;
     submitButtonText?: string;
@@ -107,10 +108,7 @@ const FormCard = ({ header, footer, inputs, style = defaultStyle, submitButtonTe
     })
 
     return (
-        <div style={style.card}>
-            {header &&
-                <h2 style={style.header}>{header}</h2>
-            }
+        <Card header={header} footer={footer} style={style}>
             <form onSubmit={handleSubmit} style={style.form}>
                 {
                     inputs.map((item, index) => {
@@ -125,7 +123,7 @@ const FormCard = ({ header, footer, inputs, style = defaultStyle, submitButtonTe
                 }
                 <button type='submit' style={style.submitButton}>{submitButtonText}</button>
             </form>
-        </div>
+        </Card>
     );
 }
 

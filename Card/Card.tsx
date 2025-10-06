@@ -46,7 +46,6 @@ const Card = ({ header, footer, style = defaultStyle, children }: CardProps) => 
 
     let newFooter = footer;
     if(React.isValidElement(footer)) {
-        console.log(footer);
         const prevStyle = (footer.props.style ?? {}) as React.CSSProperties;
         newFooter = React.cloneElement(footer, { style: { ...defaultStyle.footer, ...prevStyle } });
         footer = newFooter;
