@@ -1,3 +1,5 @@
+import React from "react";
+
 interface CardStyles {
     card?: React.CSSProperties;
     header?: React.CSSProperties;
@@ -6,7 +8,7 @@ interface CardStyles {
 
 interface CardProps {
     header?: string;
-    footer?: string;
+    footer?: React.ReactNode;
     children?: React.ReactNode;
     style?: CardStyles;
 }
@@ -16,6 +18,14 @@ const defaultStyle: CardStyles = {
         marginBottom: "20px",
         marginTop: 0,
         fontFamily: "Arial, sans-serif"
+    },
+    footer: { // Modifies the footer container
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        flexFlow: "row wrap",
+        alignItems: "center",
+        justifyContent: "space-around"
     },
     card: {
         display: "flex",
@@ -32,11 +42,21 @@ const defaultStyle: CardStyles = {
 }
 
 const Card = ({ header, footer, style = defaultStyle, children }: CardProps) => {
+    style = { ...defaultStyle, ...style }; // Override default style with provided style
+
+    let newFooter = footer;
+    if(React.isValidElement(footer)) {
+        console.log(footer);
+        const prevStyle = (footer.props.style ?? {}) as React.CSSProperties;
+        newFooter = React.cloneElement(footer, { style: { ...defaultStyle.footer, ...prevStyle } });
+        footer = newFooter;
+    }
+
     return (
         <div style={style.card}>
             {header && <h2 style={style.header}>{header}</h2>}
             {children}
-            {footer && <h4 style={style.footer}>{footer}</h4>}
+            {footer}
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface FormCardStyles {
-    title?: React.CSSProperties;
+    header?: React.CSSProperties;
     form?: React.CSSProperties;
     card?: React.CSSProperties;
     label?: React.CSSProperties;
@@ -19,7 +19,8 @@ interface FormValues {
 }
 
 interface FormCardProps {
-    title?: string;
+    header?: string;
+    footer?: string;
     inputs: FormCardInput[];
     style?: FormCardStyles;
     submitButtonText?: string;
@@ -27,7 +28,7 @@ interface FormCardProps {
 }
 
 const defaultStyle: FormCardStyles = {
-    title: {
+    header: {
         marginBottom: "20px",
         marginTop: 0,
         fontFamily: "Arial, sans-serif"
@@ -76,7 +77,7 @@ const defaultStyle: FormCardStyles = {
 
 // Notes:
 // `input` fields needs to have `name` attribute for form submission to work
-const FormCard = ({ title, inputs, style = defaultStyle, submitButtonText = "Submit", onSubmit }: FormCardProps) => {
+const FormCard = ({ header, footer, inputs, style = defaultStyle, submitButtonText = "Submit", onSubmit }: FormCardProps) => {
     style = {...defaultStyle, ...style}; // Override default style with provided style
 
     const handleSubmit = (e: any) => {
@@ -107,8 +108,8 @@ const FormCard = ({ title, inputs, style = defaultStyle, submitButtonText = "Sub
 
     return (
         <div style={style.card}>
-            {title &&
-                <h2 style={style.title}>{title}</h2>
+            {header &&
+                <h2 style={style.header}>{header}</h2>
             }
             <form onSubmit={handleSubmit} style={style.form}>
                 {
